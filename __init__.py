@@ -70,7 +70,7 @@ def paste_definitions(editor: Editor) -> None:
 
     if len(results) == 3:
         try:
-            note[editor.dic+CONFIG["PHRASES_FIELD"]] = f'{results[1]}'
+            note[editor.dic+CONFIG["PHRASES_FIELD"]] = f'{results[2]}'
         except KeyError:
             showInfo(f"Field '{CONFIG['PHRASES_FIELD']}' doesn't exist.")
             return
