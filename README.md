@@ -1,7 +1,7 @@
-### Dictionaries Available.
+### Dictionaries Available
     You can choose between Collins, Macmillan and BaBla.  
 
-### Features Available.
+### Features Available
 
 **Features for Collins**  
 Query all definitions and phonetic transcriptions for a word.  
@@ -12,7 +12,23 @@ Query all definitions, example phrases and phonetic transcriptions for a given w
 **Features for Babla**  
 Query only words translated for a destination language.  
 
-**Configurations**  
+
+## Usage
+
+Configure your dictionary, go to menu `Tools` --> `Add-ons`  or type: `Ctrl+Shft+A`  
+
+![alt tag](https://github.com/danilobatistaqueiroz/search-in-dictionaries/master/resources/search_in_dictionaries_options.png)
+
+## Translating  
+
+Only choose the dictionary in the drop-down-list and click on the button.  
+![alt tag](https://github.com/danilobatistaqueiroz/search-in-dictionaries/master/resources/browser-screen.png)
+
+![alt tag](https://github.com/danilobatistaqueiroz/search-in-dictionaries/master/resources/icon-button-dictionary.png)
+
+
+## Configurations  
+
 `WORD_FIELD` is the field to be used for queries.  
 
 `DEFINITIONS_FIELD` is used in conjuction with the name of choose dictionary.  
