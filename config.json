@@ -1,0 +1,8 @@
+{
+    "WORD_FIELD": "word",
+    "DEFINITIONS_FIELD": "-definition",
+    "PHRASES_FIELD": "-phrases",
+    "IPA_FIELD": "-ipa",
+    "DESTINATION_ABRV_LANGUAGE": "pt",
+    "DESTINATION_LANGUAGE": "portugues"
+}
