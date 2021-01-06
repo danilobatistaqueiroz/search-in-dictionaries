@@ -17,14 +17,14 @@ Query only words translated for a destination language.
 
 Configure your dictionary, go to menu `Tools` --> `Add-ons`  or type: `Ctrl+Shft+A`  
 
-![alt tag](https://github.com/danilobatistaqueiroz/search-in-dictionaries/master/resources/search_in_dictionaries_options.png)
+![alt_tag](https://raw.githubusercontent.com/danilobatistaqueiroz/search-in-dictionaries/master/resources/search_in_dictionaries_options.png)
 
 ## Translating  
 
 Only choose the dictionary in the drop-down-list and click on the button.  
-![alt tag](https://github.com/danilobatistaqueiroz/search-in-dictionaries/master/resources/browser-screen.png)
+![alt_tag](https://raw.githubusercontent.com/danilobatistaqueiroz/search-in-dictionaries/master/resources/browser-screen.png)
 
-![alt tag](https://github.com/danilobatistaqueiroz/search-in-dictionaries/master/resources/icon-button-dictionary.png)
+![alt_tag](https://raw.githubusercontent.com/danilobatistaqueiroz/search-in-dictionaries/master/resources/icon-button-dictionary.png)
 
 
 ## Configurations  
