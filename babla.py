@@ -17,10 +17,12 @@ def search(word, abrv_lang, language):
         source = session.get(f'https://{abrv_lang}.bab.la/dicionario/ingles-{language}/{word}', headers=headers).text
         soup = BeautifulSoup(source, "html.parser")
         quick_results = soup.find_all('div', class_='quick-result-overview')
+        count = 0
         for result in quick_results:
-            txt = result.get_text().split('\n')
-            if abrv_lang.upper() in txt:
-                txt = [x for x in txt if x]
-                txt.remove(abrv_lang.upper())
-                txt_definitions.append(','.join(txt))
-    return ['<br>\n'.join(txt_definitions)]
+            lst_txt = result.get_text().split('\n')
+            lst_txt = [x for x in lst_txt if x]
+            if abrv_lang.upper() in lst_txt:
+                count+=1
+                lst_txt.remove(abrv_lang.upper())
+                txt_definitions.append(str(count)+' '+','.join(lst_txt))
+    return ['. '.join(txt_definitions)+'.']
