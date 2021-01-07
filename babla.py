@@ -12,7 +12,7 @@ headers = {
 }
 
 def search(word, abrv_lang, language):
-    txt_definitions = []
+    lst_definitions = []
     with requests.Session() as session:
         source = session.get(f'https://{abrv_lang}.bab.la/dicionario/ingles-{language}/{word}', headers=headers).text
         soup = BeautifulSoup(source, "html.parser")
@@ -24,5 +24,7 @@ def search(word, abrv_lang, language):
             if abrv_lang.upper() in lst_txt:
                 count+=1
                 lst_txt.remove(abrv_lang.upper())
-                txt_definitions.append(str(count)+' '+','.join(lst_txt))
-    return ['. '.join(txt_definitions)+'.']
+                lst_definitions.append(','.join(lst_txt))
+    definitions = ','.join(lst_definitions).split(',')
+    definitions = list(dict.fromkeys(definitions))
+    return [', '.join(definitions)]
