@@ -11,20 +11,33 @@ headers = {
 
 }
 
-def search(word, abrv_lang, language):
+languagues = {'english':'ingles','portuguese':'portugues','spanish':'espanol','french':'frances','germani':'alemao'}
+
+def convert_lang(language):
+    if language in languagues:
+        return languagues[language]
+    else:
+        return language
+
+def search(word, abrv_target, lang_source, lang_target):
+    lang_source = convert_lang(lang_source)
+    lang_target = convert_lang(lang_target)
     lst_definitions = []
     with requests.Session() as session:
-        source = session.get(f'https://{abrv_lang}.bab.la/dicionario/ingles-{language}/{word}', headers=headers).text
+        source = session.get(f'https://{abrv_target}.bab.la/dicionario/{lang_source}-{lang_target}/{word}', headers=headers).text
         soup = BeautifulSoup(source, "html.parser")
         quick_results = soup.find_all('div', class_='quick-result-overview')
         count = 0
         for result in quick_results:
             lst_txt = result.get_text().split('\n')
             lst_txt = [x for x in lst_txt if x]
-            if abrv_lang.upper() in lst_txt:
+            if abrv_target.upper() in lst_txt:
+                div_term = result.find_previous('div', class_='quick-result-option')
+                term = div_term.find('a', class_='babQuickResult').get_text()
                 count+=1
-                lst_txt.remove(abrv_lang.upper())
-                lst_definitions.append(','.join(lst_txt))
-    definitions = ','.join(lst_definitions).split(',')
-    definitions = list(dict.fromkeys(definitions))
-    return [', '.join(definitions)]
+                lst_txt.remove(abrv_target.upper())
+                lst_definitions.append('<u>'+term+'</u>:'+','.join(lst_txt))
+    return ['. '.join(lst_definitions)]
+
+
+#print(search('milk','pt','english','portuguese'))

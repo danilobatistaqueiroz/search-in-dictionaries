@@ -12,10 +12,11 @@ from aqt.qt import *
 from . import collins
 from . import macmillan
 from . import babla
+from . import pons
 
 from .config import setup_synced_config
 
-dictionaries = ['collins','macmillan','babla']
+dictionaries = ['collins','macmillan','babla','pons']
 
 ADDON_PATH = os.path.dirname(__file__)
 ICON_PATH = os.path.join(ADDON_PATH, "icons", "dict.ico")
@@ -38,15 +39,18 @@ def paste_definitions(editor: Editor) -> None:
 
     word = word.lower()
 
-    language = CONFIG["DESTINATION_LANGUAGE"]
-    abrv_language = CONFIG["DESTINATION_ABRV_LANGUAGE"]
+    source_language = CONFIG["SOURCE_LANGUAGE"]
+    target_language = CONFIG["TARGET_LANGUAGE"]
+    abrv = CONFIG["TARGET_ABRV"]
 
     if editor.dic == 'collins':
         results = collins.search(word)
     elif editor.dic == 'macmillan':
         results = macmillan.search(word)
     elif editor.dic == 'babla':
-        results = babla.search(word, abrv_language, language)
+        results = babla.search(word, abrv, source_language, target_language)
+    elif editor.dic == 'pons':
+        results = pons.search(word, source_language, target_language)
 
     if len(results) == 0:
         showInfo(f"Word {word} not found.")
@@ -58,21 +62,28 @@ def paste_definitions(editor: Editor) -> None:
     try:
         note[editor.dic+CONFIG["DEFINITIONS_FIELD"]] = f'{results[0]}'
     except KeyError:
-        showInfo(f"Field '{CONFIG['DEFINITIONS_FIELD']}' doesn't exist.")
+        showInfo(f"Field '{editor.dic}-{CONFIG['DEFINITIONS_FIELD']}' doesn't exist.")
         return
 
     if len(results) >= 2:
         try:
             note[editor.dic+CONFIG["IPA_FIELD"]] = f'{results[1]}'
         except KeyError:
-            showInfo(f"Field '{CONFIG['IPA_FIELD']}' doesn't exist.")
+            showInfo(f"Field '{editor.dic}-{CONFIG['IPA_FIELD']}' doesn't exist.")
             return
 
-    if len(results) == 3:
+    if len(results) >= 3:
         try:
             note[editor.dic+CONFIG["PHRASES_FIELD"]] = f'{results[2]}'
         except KeyError:
-            showInfo(f"Field '{CONFIG['PHRASES_FIELD']}' doesn't exist.")
+            showInfo(f"Field '{editor.dic}-{CONFIG['PHRASES_FIELD']}' doesn't exist.")
+            return
+
+    if len(results) >= 4:
+        try:
+            note[editor.dic+CONFIG["TARGET_PHRASES_FIELD"]] = f'{results[3]}'
+        except KeyError:
+            showInfo(f"Field '{editor.dic}-{CONFIG['TARGET_PHRASES_FIELD']}' doesn't exist.")
             return
 
     # update editor

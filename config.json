@@ -2,7 +2,9 @@
     "WORD_FIELD": "word",
     "DEFINITIONS_FIELD": "-definition",
     "PHRASES_FIELD": "-phrases",
+    "TARGET_PHRASES_FIELD": "-phrases-pt",
     "IPA_FIELD": "-ipa",
-    "DESTINATION_ABRV_LANGUAGE": "pt",
-    "DESTINATION_LANGUAGE": "portugues"
+    "TARGET_ABRV": "pt",
+    "SOURCE_LANGUAGE": "ingles",
+    "TARGET_LANGUAGE": "portugues"
 }
