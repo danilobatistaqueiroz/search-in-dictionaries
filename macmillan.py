@@ -11,6 +11,12 @@ headers = {
 
 }
 
+def insert_end_dot(text):
+    text = text.strip()
+    if text[-1:] != '.':
+        text = text.strip()+'.'
+    return text
+
 def search(word):
     txt_definitions = []
     txt_examples = []
@@ -24,10 +30,16 @@ def search(word):
             cnt+=1
             text = span_definition.text.replace('\n',' ').replace('  ',' ')
             text = text.capitalize()
+            sections = text.split(':')
+            if len(sections) > 1:
+                text = '<u>'+sections[0]+'</u>: '+sections[1].capitalize()
+            else:
+                text = sections[0]
+            text = insert_end_dot(text)
             txt_definitions.append(f'{cnt}. {text}')
         span_prons = soup.find_all('span', class_='PRON')
         for pron in span_prons:
-            text = pron.text.replace('  ',' ')
+            text = pron.text.replace('  ',' ').replace('/','')
             txt_ipas.append(text)
         cnt=0
         div_examples = soup.find_all('div', class_='EXAMPLES')
@@ -35,6 +47,7 @@ def search(word):
             cnt+=1
             text = p_example.text.replace('\n',' ').replace('  ',' ')
             text = text.capitalize()
+            text = insert_end_dot(text)
             txt_examples.append(f'{cnt}. {text}')
 
     return ['<br>\n'.join(txt_definitions), ', '.join(txt_ipas), '<br>\n'.join(txt_examples)]
