@@ -1,3 +1,8 @@
+import sys
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+
 import os
 import urllib
 import logging
@@ -14,11 +19,33 @@ from . import macmillan
 from . import babla
 from . import pons
 from . import linguee
-from . import freedict
+from . import freedic
+from . import reverso
 
 from .config import setup_synced_config
 
-dictionaries = ['collins','macmillan','babla','pons','linguee','freedict']
+
+def showdialog(description):
+    title = 'Anki Dialog'
+    showdialogtitle(description,title)
+
+def showdialogtitle(description, title):
+   msg = QMessageBox()
+   msg.setIcon(QMessageBox.Information)
+   
+   msg.setText(description)
+   msg.setWindowTitle(title)
+   msg.setStandardButtons(QMessageBox.Ok)
+	
+   msg.buttonClicked.connect(msgbtn)
+
+   retval = msg.exec_()
+
+def msgbtn(i):
+   print ("Button pressed is:",i.text())
+
+
+dictionaries = ['collins','macmillan','babla','pons','linguee','freedic','reverso']
 
 ADDON_PATH = os.path.dirname(__file__)
 ICON_PATH = os.path.join(ADDON_PATH, "icons", "dict.ico")
@@ -35,7 +62,7 @@ def paste_definitions(editor: Editor) -> None:
     try:
         word = note[CONFIG["WORD_FIELD"]]
     except KeyError:
-        showInfo(f"Field '{CONFIG['WORD_FIELD']}' doesn't exist.")
+        showdialog(f"Field '{CONFIG['WORD_FIELD']}' doesn't exist.")
         return
     logging.debug(f"Field text: {word}")
 
@@ -43,7 +70,8 @@ def paste_definitions(editor: Editor) -> None:
 
     source_language = CONFIG["SOURCE_LANGUAGE"]
     target_language = CONFIG["TARGET_LANGUAGE"]
-    abrv = CONFIG["TARGET_ABRV"]
+    abrv = CONFIG["LANG_TARGET_ABRV"]
+    abrv_country = CONFIG["COUNTRY_TARGET_ABRV"]
 
     if editor.dic == 'collins':
         results = collins.search(word)
@@ -55,46 +83,55 @@ def paste_definitions(editor: Editor) -> None:
         results = pons.search(word, source_language, target_language)
     elif editor.dic == 'linguee':
         results = linguee.search(word, source_language, target_language)
-    elif editor.dic == 'freedict':
-        results = freedict.search(word, abrv)
+    elif editor.dic == 'freedic':
+        results = freedic.search(word, abrv, abrv_country)
+    elif editor.dic == 'reverso':
+        results = reverso.search(word,abrv,target_language)
+
 
     if len(results) == 0:
-        showInfo(f"Word {word} not found.")
-    elif results[0] == False:
-        showInfo(f"Word {word} not found.")
-    elif results[0].strip() == '':
-        showInfo(f"Word {word} not found.")
+        showdialog(f"Word {word} not found.")
+    elif results[0]=='' and results[1]=='' and results[2]=='' and results[3]=='':
+        showdialog(f"Word {word} not found.")
 
     if len(results) >= 1:
         try:
             if results[0] != '':
-                note[editor.dic+CONFIG["DEFINITIONS_FIELD"]] = f'{results[0]}'
+                note[editor.dic+CONFIG["TRANSLATIONS_FIELD"]] = f'{results[0]}'
         except KeyError:
-            showInfo(f"Field '{editor.dic}{CONFIG['DEFINITIONS_FIELD']}' doesn't exist.")
+            showdialog(f"Field '{editor.dic}{CONFIG['TRANSLATIONS_FIELD']}' doesn't exist.")
             return
 
     if len(results) >= 2:
         try:
             if results[1] != '':
-                note[editor.dic+CONFIG["IPA_FIELD"]] = f'{results[1]}'
+                note[editor.dic+CONFIG["DEFINITIONS_FIELD"]] = f'{results[1]}'
         except KeyError:
-            showInfo(f"Field '{editor.dic}{CONFIG['IPA_FIELD']}' doesn't exist.")
+            showdialog(f"Field '{editor.dic}{CONFIG['DEFINITIONS_FIELD']}' doesn't exist.")
             return
 
     if len(results) >= 3:
         try:
             if results[2] != '':
-                note[editor.dic+CONFIG["PHRASES_FIELD"]] = f'{results[2]}'
+                note[editor.dic+CONFIG["IPA_FIELD"]] = f'{results[2]}'
         except KeyError:
-            showInfo(f"Field '{editor.dic}{CONFIG['PHRASES_FIELD']}' doesn't exist.")
+            showdialog(f"Field '{editor.dic}{CONFIG['IPA_FIELD']}' doesn't exist.")
             return
 
     if len(results) >= 4:
         try:
             if results[3] != '':
-                note[editor.dic+CONFIG["TARGET_PHRASES_FIELD"]] = f'{results[3]}'
+                note[editor.dic+CONFIG["PHRASES_FIELD"]] = f'{results[3]}'
         except KeyError:
-            showInfo(f"Field '{editor.dic}{CONFIG['TARGET_PHRASES_FIELD']}' doesn't exist.")
+            showdialog(f"Field '{editor.dic}{CONFIG['PHRASES_FIELD']}' doesn't exist.")
+            return
+
+    if len(results) >= 5:
+        try:
+            if results[4] != '':
+                note[editor.dic+CONFIG["TRANSLATED_PHRASES_FIELD"]] = f'{results[4]}'
+        except KeyError:
+            showdialog(f"Field '{editor.dic}{CONFIG['TRANSLATED_PHRASES_FIELD']}' doesn't exist.")
             return
 
     # update editor
