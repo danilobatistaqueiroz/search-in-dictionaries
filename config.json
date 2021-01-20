@@ -1,10 +1,12 @@
 {
     "WORD_FIELD": "word",
+    "TRANSLATIONS_FIELD":"-pt",
     "DEFINITIONS_FIELD": "-definition",
     "PHRASES_FIELD": "-phrases",
-    "TARGET_PHRASES_FIELD": "-phrases-pt",
+    "TRANSLATED_PHRASES_FIELD": "-phrases-pt",
     "IPA_FIELD": "-ipa",
-    "TARGET_ABRV": "pt",
+    "LANG_TARGET_ABRV": "pt",
+    "COUNTRY_TARGET_ABRV": "br",
     "SOURCE_LANGUAGE": "ingles",
     "TARGET_LANGUAGE": "portugues"
 }

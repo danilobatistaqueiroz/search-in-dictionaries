@@ -33,10 +33,13 @@ def search(word, abrv_target, lang_source, lang_target):
             lst_txt = [x for x in lst_txt if x]
             if abrv_target.upper() in lst_txt:
                 div_term = result.find_previous('div', class_='quick-result-option')
-                term = div_term.find('a', class_='babQuickResult').get_text()
-                count+=1
-                lst_txt.remove(abrv_target.upper())
-                lst_definitions.append('<u>'+term+'</u>:'+','.join(lst_txt))
+                if div_term is not None:
+                    term = div_term.find('a', class_='babQuickResult').get_text()
+                    count+=1
+                    lst_txt.remove(abrv_target.upper())
+                    if term == word:
+                        term = f'<b>{term}</b>'
+                    lst_definitions.append('<u>'+term+'</u>:'+','.join(lst_txt))
     return ['. '.join(lst_definitions)]
 
 

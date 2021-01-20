@@ -24,6 +24,16 @@ def insert_end_dot(text):
         text = text.strip()+'.'
     return text
 
+def capitalize_first(txt):
+    """capitalize the first letter"""
+    if txt is not None and len(txt)>1:
+        return txt[0:1].upper()+txt[1:]
+
+def color_word(word,txt):
+    txt = txt.replace(word,f'<font color="#ff0000">{word}</font>')
+    txt = txt.replace(f'{word.capitalize()}',f'<font color="#ff0000">{word.capitalize()}</font>')
+    return txt
+
 def search(word, lang_source, lang_target):
     lang_source = convert_lang(lang_source)
     lang_target = convert_lang(lang_target)
@@ -43,8 +53,9 @@ def search(word, lang_source, lang_target):
         for result in examples:
             cnt+=1
             lst_txt = result.get_text().split('—')
-            example = insert_end_dot(lst_txt[0].strip().capitalize())
-            translated = insert_end_dot(lst_txt[1].strip().capitalize())
+            example = insert_end_dot(capitalize_first(lst_txt[0].strip()))
+            example = color_word(word,example)
+            translated = insert_end_dot(capitalize_first(lst_txt[1].strip()))
             lst_examples.append(str(cnt)+'. '+example)
             lst_examples_translated.append(str(cnt)+'. '+translated)
 
@@ -62,9 +73,10 @@ def search(word, lang_source, lang_target):
                 example = insert_end_dot(dictLink_source.get_text())
                 translated = insert_end_dot(dictLink2_target.get_text())
 
+                example = color_word(word,example)
                 lst_examples.append(str(cnt)+'. '+example)
                 lst_examples_translated.append(str(cnt)+'. '+translated)
 
-    return [','.join(lst_definitions), '', '<br>'.join(lst_examples), '<br>'.join(lst_examples_translated)]
+    return ['', ','.join(lst_definitions), '', '<br>'.join(lst_examples), '<br>'.join(lst_examples_translated)]
 
-print(search('slayer','english','portuguese'))
+#print(search('slayer','english','portuguese'))

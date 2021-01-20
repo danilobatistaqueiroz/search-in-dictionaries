@@ -18,6 +18,27 @@ def convert_lang(language):
     else:
         return language
 
+def capitalize_first(txt):
+    if txt is not None and len(txt)>1:
+        return txt[0:1].upper()+txt[1:]
+
+def has_same_word(definition,word):
+    pos = -1
+    size = len(word)
+    definition = definition.lower()
+    while True:
+        pos = definition.find(word,pos+1)
+        if pos == -1:
+            break
+        after_word = definition[pos+size:pos+size+1]
+        if ': ;,.-="_)(*!?+/[]'.find(after_word) > -1:
+            if pos > 0:
+                if ': ;,.-="_)(*!?+/[]'.find(definition[pos-1:pos]) > -1:
+                    return True
+            else:
+                return True
+    return False
+
 def search(word, lang_source, lang_target):
     lang_source = convert_lang(lang_source)
     lang_target = convert_lang(lang_target)
@@ -42,20 +63,31 @@ def search(word, lang_source, lang_target):
             dd = phrase.find('dd',class_='dd-inner')
             if dt is not None:
                 div = dt.find('div',class_='source')
-                target = dd.find('div',class_='target')
-                dic_phrases.append(div.get_text())
-                dic_phrases_pt.append(target.get_text())
+                if dd is not None:
+                    target = dd.find('div',class_='target')
+                    dic_phrases.append(div.get_text())
+                    dic_phrases_pt.append(target.get_text())
 
         results = soup.find('div', class_='results')
+        if results is None:
+            return ['', '', '', '']
+            
         definitions = results.find_all('dl', class_='dl-horizontal')
+        exists_definition_equal_word = False
         for definition in definitions:
             dt = definition.find('dt',class_='dt-inner')
             dd = definition.find('dd',class_='dd-inner')
             if dt is not None:
                 div = dt.find('div',class_='source')
                 target = dd.find('div',class_='target')
-                word_definition = div.get_text().replace('\n','').capitalize()
+                word_definition = div.get_text().replace('\n','')
+                word_definition = capitalize_first(word_definition)
+                if has_same_word(word_definition,word):
+                    exists_definition_equal_word = True
                 lst_definitions.append('<u>'+word_definition+'</u>: '+target.get_text().strip())
+
+    if exists_definition_equal_word == False:
+        return ['', '', '', '']
 
     str_definitions = '.  '.join(lst_definitions)
     str_definitions = str_definitions.replace('\n','')
@@ -71,6 +103,7 @@ def search(word, lang_source, lang_target):
         cnt+=1
         str_phrases_pt += f'{cnt}. {phrase}.<br>'
 
+    all_content.append('')
     all_content.append(str_definitions)
     all_content.append(str_phonetics)
     all_content.append(str_phrases)

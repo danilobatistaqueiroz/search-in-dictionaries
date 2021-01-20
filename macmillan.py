@@ -17,6 +17,18 @@ def insert_end_dot(text):
         text = text.strip()+'.'
     return text
 
+def capitalize_first(txt):
+    """capitalize the first letter"""
+    if txt is not None and len(txt)>1:
+        return txt[0:1].upper()+txt[1:]
+    else:
+        return txt
+
+def color_word(word,txt):
+    txt = txt.replace(word,f'<font color="#ff0000">{word}</font>')
+    txt = txt.replace(f'{word.capitalize()}',f'<font color="#ff0000">{word.capitalize()}</font>')
+    return txt
+
 def search(word):
     txt_definitions = []
     txt_examples = []
@@ -29,10 +41,11 @@ def search(word):
         for span_definition in span_definitions:
             cnt+=1
             text = span_definition.text.replace('\n',' ').replace('  ',' ')
-            text = text.capitalize()
+            text = capitalize_first(text)
             sections = text.split(':')
+            sections[1] = capitalize_first(sections[1])
             if len(sections) > 1:
-                text = '<u>'+sections[0]+'</u>: '+sections[1].capitalize()
+                text = '<u>'+sections[0]+'</u>: '+sections[1]
             else:
                 text = sections[0]
             text = insert_end_dot(text)
@@ -46,10 +59,11 @@ def search(word):
         for p_example in div_examples:
             cnt+=1
             text = p_example.text.replace('\n',' ').replace('  ',' ')
-            text = text.capitalize()
+            text = capitalize_first(text)
             text = insert_end_dot(text)
+            text = color_word(word,text)
             txt_examples.append(f'{cnt}. {text}')
 
-    return ['<br>\n'.join(txt_definitions), ', '.join(txt_ipas), '<br>\n'.join(txt_examples)]
+    return ['', '<br>\n'.join(txt_definitions), ', '.join(txt_ipas), '<br>\n'.join(txt_examples)]
 
 #print(search('fight'))

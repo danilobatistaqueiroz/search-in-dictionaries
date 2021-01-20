@@ -28,5 +28,6 @@ def search(word):
         for sp_ipa in sp_ipas:
             text = sp_ipa.text.replace('  ',' ').strip()
             txt_ipas.append(text)
+        txt_ipas = list(set(txt_ipas))
 
-    return ['<br>\n'.join(txt_definitions),', '.join(txt_ipas)]
+    return ['', '<br>\n'.join(txt_definitions),', '.join(txt_ipas)]
