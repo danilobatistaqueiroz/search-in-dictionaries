@@ -97,7 +97,8 @@ def paste_definitions(editor: Editor) -> None:
     if len(results) >= 1:
         try:
             if results[0] != '':
-                note[editor.dic+CONFIG["TRANSLATIONS_FIELD"]] = f'{results[0]}'
+                if note[editor.dic+CONFIG["TRANSLATIONS_FIELD"]] == '':
+                    note[editor.dic+CONFIG["TRANSLATIONS_FIELD"]] = f'{results[0]}'
         except KeyError:
             showdialog(f"Field '{editor.dic}{CONFIG['TRANSLATIONS_FIELD']}' doesn't exist.")
             return

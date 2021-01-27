@@ -1,14 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-
-headers = {
-   'Content-Type': 'application/xhtml+xml',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST,OPTIONS',
-    'Access-Control-Allow-Headers': '*',
-    'Access-Control--Max-Age': '86400',
-    'User-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.87 Safari/537.36'
-}
+from .basic import html_headers, capitalize_first, color_word, insert_end_dot
 
 languagues = {'ingles':'english','portugues':'portuguese','espanol':'spanish','frances':'french','alemao':'germani'}
 
@@ -17,10 +9,6 @@ def convert_lang(language):
         return languagues[language]
     else:
         return language
-
-def capitalize_first(txt):
-    if txt is not None and len(txt)>1:
-        return txt[0:1].upper()+txt[1:]
 
 def has_same_word(definition,word):
     pos = -1
@@ -48,7 +36,7 @@ def search(word, lang_source, lang_target):
     lst_phonetics = []
     all_content = []
     with requests.Session() as session:
-        source = session.get(f'https://en.pons.com/translate/{lang_source}-{lang_target}/{word}', headers=headers).text
+        source = session.get(f'https://en.pons.com/translate/{lang_source}-{lang_target}/{word}', headers=html_headers).text
         soup = BeautifulSoup(source, "html.parser")
         span_phonetics = soup.find_all('span', class_='phonetics')
         for phonetic in span_phonetics:

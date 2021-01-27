@@ -3,15 +3,7 @@ from bs4 import BeautifulSoup
 from bs4 import NavigableString
 import json
 import re
-
-headers = {
-   'Content-Type': 'application/xhtml+xml',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST,OPTIONS',
-    'Access-Control-Allow-Headers': '*',
-    'Access-Control--Max-Age': '86400',
-    'User-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.87 Safari/537.36'
-}
+from .basic import html_headers, capitalize_first, insert_end_dot
 
 headers_post = {
     'Access-Control-Allow-Origin': '*',
@@ -30,19 +22,6 @@ def convert_lang(language):
         return languagues[language]
     else:
         return language
-
-def insert_end_dot(text):
-    text = text.strip()
-    if text[-1:] != '.':
-        text = text.strip()+'.'
-    return text
-
-def capitalize_first(txt):
-    """capitalize the first letter"""
-    if txt is not None and len(txt)>1:
-        return txt[0:1].upper()+txt[1:]
-    else:
-        return txt
 
 def color_word(txt):
     txt = re.sub(r'<em class="both">(.*)</em>', '<font color="#ff0000">\g<1></font>', txt)
@@ -65,6 +44,9 @@ def phrases(word,term,abrv_target,lang_target):
     phrases.append({'phrase':color_word(r_json['list'][0]['s_text']), 'translation':color_word(r_json['list'][0]['t_text'])})
     phrases.append({'phrase':color_word(r_json['list'][1]['s_text']), 'translation':color_word(r_json['list'][1]['t_text'])})
     phrases.append({'phrase':color_word(r_json['list'][2]['s_text']), 'translation':color_word(r_json['list'][2]['t_text'])})
+    phrases.append({'phrase':color_word(r_json['list'][3]['s_text']), 'translation':color_word(r_json['list'][3]['t_text'])})
+    phrases.append({'phrase':color_word(r_json['list'][4]['s_text']), 'translation':color_word(r_json['list'][4]['t_text'])})
+    phrases.append({'phrase':color_word(r_json['list'][5]['s_text']), 'translation':color_word(r_json['list'][5]['t_text'])})
     return phrases
 
 def phrases_text(items):
@@ -91,7 +73,7 @@ def search(word,abrv_target,lang_target):
     lang_target = convert_lang(lang_target)
     lst_translations = []
     with requests.Session() as session:
-        source = session.get(f'https://context.reverso.net/translation/english-{lang_target}/{word}', headers=headers).text
+        source = session.get(f'https://context.reverso.net/translation/english-{lang_target}/{word}', headers=html_headers).text
         soup = BeautifulSoup(source, "html.parser")
         cnt=0
         freq=0
@@ -102,7 +84,9 @@ def search(word,abrv_target,lang_target):
             if type(translation) == NavigableString:
                 continue
             text = translation.get_text()
-            freq = int(translation['data-freq'])
+            freq = ''
+            if 'data-freq' in translation:
+                freq = int(translation['data-freq'])
             text = text.replace('\n','').strip()
             if text.lower() == word or len(text) == 0:
                 continue

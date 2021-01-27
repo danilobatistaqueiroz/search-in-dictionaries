@@ -1,30 +1,13 @@
 import requests
 from bs4 import BeautifulSoup
-
-headers = {
-   'Content-Type': 'application/xhtml+xml',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST,OPTIONS',
-    'Access-Control-Allow-Headers': '*',
-    'Access-Control--Max-Age': '86400',
-    'User-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.87 Safari/537.36'
-
-}
-
-languagues = {'english':'ingles','portuguese':'portugues','spanish':'espanol','french':'frances','germani':'alemao'}
-
-def convert_lang(language):
-    if language in languagues:
-        return languagues[language]
-    else:
-        return language
+from .basic import html_headers, convert_lang
 
 def search(word, abrv_target, lang_source, lang_target):
     lang_source = convert_lang(lang_source)
     lang_target = convert_lang(lang_target)
     lst_definitions = []
     with requests.Session() as session:
-        source = session.get(f'https://{abrv_target}.bab.la/dicionario/{lang_source}-{lang_target}/{word}', headers=headers).text
+        source = session.get(f'https://{abrv_target}.bab.la/dicionario/{lang_source}-{lang_target}/{word}', headers=html_headers).text
         soup = BeautifulSoup(source, "html.parser")
         quick_results = soup.find_all('div', class_='quick-result-overview')
         count = 0

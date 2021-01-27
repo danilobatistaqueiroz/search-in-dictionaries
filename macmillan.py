@@ -1,32 +1,20 @@
 import requests
 from bs4 import BeautifulSoup
+from .basic import html_headers, convert_lang, capitalize_first, color_word, insert_end_dot
 
-headers = {
-   'Content-Type': 'application/xhtml+xml',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST,OPTIONS',
-    'Access-Control-Allow-Headers': '*',
-    'Access-Control--Max-Age': '86400',
-    'User-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.87 Safari/537.36'
+def blur_color_text(txt):
+    return f'<font color="#c7c7c7"><i>{txt}</i></font>'
 
-}
-
-def insert_end_dot(text):
-    text = text.strip()
-    if text[-1:] != '.':
-        text = text.strip()+'.'
-    return text
-
-def capitalize_first(txt):
-    """capitalize the first letter"""
-    if txt is not None and len(txt)>1:
-        return txt[0:1].upper()+txt[1:]
+def blur_explanation_bold_phrase(txt):
+    dot = txt.find(':')
+    if dot > 0:
+        explanation = txt[:dot+1]
+        phrase = txt[dot+1:]
+        explanation = blur_color_text(explanation)
+        phrase = f'<b>{phrase}</b>'
+        txt = explanation + phrase
     else:
-        return txt
-
-def color_word(word,txt):
-    txt = txt.replace(word,f'<font color="#ff0000">{word}</font>')
-    txt = txt.replace(f'{word.capitalize()}',f'<font color="#ff0000">{word.capitalize()}</font>')
+        txt = f'<b>{txt}</b>'
     return txt
 
 def search(word):
@@ -34,36 +22,42 @@ def search(word):
     txt_examples = []
     txt_ipas = []
     with requests.Session() as session:
-        source = session.get(f'https://www.macmillandictionary.com/us/dictionary/american/{word}', headers=headers).text
+        source = session.get(f'https://www.macmillandictionary.com/us/dictionary/american/{word}', headers=html_headers).text
         soup = BeautifulSoup(source, "html.parser")
-        cnt=0
-        span_definitions = soup.find_all('span', class_='DEFINITION')
-        for span_definition in span_definitions:
-            cnt+=1
-            text = span_definition.text.replace('\n',' ').replace('  ',' ')
-            text = capitalize_first(text)
-            sections = text.split(':')
-            sections[1] = capitalize_first(sections[1])
+        cntdef=0
+        senses = soup.find_all('div', class_='SENSE-CONTENT')
+        for sense in senses:
+            span_definition = sense.find('span', class_='DEFINITION')
+
+            cntdef+=1
+            txt_def = span_definition.text.replace('\n',' ').replace('  ',' ')
+            txt_def = capitalize_first(txt_def)
+            sections = txt_def.split(':')
             if len(sections) > 1:
-                text = '<u>'+sections[0]+'</u>: '+sections[1]
+                sections[1] = capitalize_first(sections[1])
+                txt_def = '<u>'+sections[0]+'</u>: '+sections[1]
             else:
-                text = sections[0]
-            text = insert_end_dot(text)
-            txt_definitions.append(f'{cnt}. {text}')
-        span_prons = soup.find_all('span', class_='PRON')
-        for pron in span_prons:
-            text = pron.text.replace('  ',' ').replace('/','')
-            txt_ipas.append(text)
-        cnt=0
-        div_examples = soup.find_all('div', class_='EXAMPLES')
-        for p_example in div_examples:
-            cnt+=1
-            text = p_example.text.replace('\n',' ').replace('  ',' ')
-            text = capitalize_first(text)
-            text = insert_end_dot(text)
-            text = color_word(word,text)
-            txt_examples.append(f'{cnt}. {text}')
+                txt_def = sections[0]
+            txt_def = insert_end_dot(txt_def)
+            txt_definitions.append(f'{cntdef}. {txt_def}')
+
+            span_prons = sense.find_all('span', class_='PRON')
+            for pron in span_prons:
+                txt_ipa = pron.text.replace('  ',' ').replace('/','')
+                txt_ipas.append(txt_ipa)
+
+            div_examples = sense.find_all('div', class_='EXAMPLES')
+            if len(div_examples) > 0:
+                txt_def = blur_color_text(f'{cntdef}. {txt_def}')
+                txt_examples.append(txt_def)
+            for p_example in div_examples:
+                text = p_example.text.replace('\n',' ').replace('  ',' ')
+                text = capitalize_first(text)
+                text = insert_end_dot(text)
+                text = color_word(word,text)
+                text = blur_explanation_bold_phrase(text)
+                txt_examples.append(text)
 
     return ['', '<br>\n'.join(txt_definitions), ', '.join(txt_ipas), '<br>\n'.join(txt_examples)]
 
-#print(search('fight'))
+#print(search('overcome'))
