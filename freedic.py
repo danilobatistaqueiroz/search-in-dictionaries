@@ -236,4 +236,4 @@ def remove_abrv(txt):
         txt = txt.replace('especially','')
     return txt
 
-#search('pad','pt','br')
+#print(search('humble','pt','br'))

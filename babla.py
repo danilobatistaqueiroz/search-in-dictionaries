@@ -23,7 +23,7 @@ def search(word, abrv_target, lang_source, lang_target):
                     if term == word:
                         term = f'<b>{term}</b>'
                     lst_definitions.append('<u>'+term+'</u>:'+','.join(lst_txt))
-    return ['. '.join(lst_definitions)]
+    return ['. '.join(lst_definitions),'','','','']
 
 
 #print(search('milk','pt','english','portuguese'))

@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from .basic import html_headers, convert_lang, capitalize_first, color_word
+from .basic import html_headers, convert_lang, capitalize_first, color_word, blur_color_text
 
 def text_treatment(word,txt):
     txt = txt.replace('\n','')
@@ -50,6 +50,7 @@ def find_dictionary(word, soup, dic):
         for definition in definitions:
             text = definition.text
             text = text_treatment(word,text)
+            text = blur_color_text(text)
             txt_definitions.append(f'{text}')
         senses = div_definition.find_all('div', class_='sense')
         for sense in senses:
@@ -63,8 +64,9 @@ def find_dictionary(word, soup, dic):
                 txt_phrase_def = ''
                 if phrase_definition is not None:
                     txt_phrase_def = phrase_definition.get_text()
+                    txt_phrase_def = blur_color_text(txt_phrase_def)
                     txt_phrase_def = text_treatment(word,txt_phrase_def)
-                txt_phrases.append(f'{txt_phrase_def} - <b>"{text_phrase}"</b>')
+                txt_phrases.append(f'{txt_phrase_def}<BR><b>"{text_phrase}"</b>')
     sp_ipas = soup.find_all('span', class_=['pron', 'type-'])
     for sp_ipa in sp_ipas:
         texts = sp_ipa.text.replace('  ',' ').split(',')

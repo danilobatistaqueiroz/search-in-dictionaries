@@ -41,12 +41,18 @@ def phrases(word,term,abrv_target,lang_target):
     source = requests.post(f'https://context.reverso.net/translation/english-{lang_target}/{word}', json=data, headers=headers_post)
     r_json = source.json()
     phrases=[]
-    phrases.append({'phrase':color_word(r_json['list'][0]['s_text']), 'translation':color_word(r_json['list'][0]['t_text'])})
-    phrases.append({'phrase':color_word(r_json['list'][1]['s_text']), 'translation':color_word(r_json['list'][1]['t_text'])})
-    phrases.append({'phrase':color_word(r_json['list'][2]['s_text']), 'translation':color_word(r_json['list'][2]['t_text'])})
-    phrases.append({'phrase':color_word(r_json['list'][3]['s_text']), 'translation':color_word(r_json['list'][3]['t_text'])})
-    phrases.append({'phrase':color_word(r_json['list'][4]['s_text']), 'translation':color_word(r_json['list'][4]['t_text'])})
-    phrases.append({'phrase':color_word(r_json['list'][5]['s_text']), 'translation':color_word(r_json['list'][5]['t_text'])})
+    if len(r_json) > 0:
+        phrases.append({'phrase':color_word(r_json['list'][0]['s_text']), 'translation':color_word(r_json['list'][0]['t_text'])})
+    if len(r_json) > 1:
+        phrases.append({'phrase':color_word(r_json['list'][1]['s_text']), 'translation':color_word(r_json['list'][1]['t_text'])})
+    if len(r_json) > 2:
+        phrases.append({'phrase':color_word(r_json['list'][2]['s_text']), 'translation':color_word(r_json['list'][2]['t_text'])})
+    if len(r_json) > 3:
+        phrases.append({'phrase':color_word(r_json['list'][3]['s_text']), 'translation':color_word(r_json['list'][3]['t_text'])})
+    if len(r_json) > 4:
+        phrases.append({'phrase':color_word(r_json['list'][4]['s_text']), 'translation':color_word(r_json['list'][4]['t_text'])})
+    if len(r_json) > 5:
+        phrases.append({'phrase':color_word(r_json['list'][5]['s_text']), 'translation':color_word(r_json['list'][5]['t_text'])})
     return phrases
 
 def phrases_text(items):

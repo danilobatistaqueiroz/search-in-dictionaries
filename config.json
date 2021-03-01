@@ -5,6 +5,7 @@
     "PHRASES_FIELD": "-phrases",
     "TRANSLATED_PHRASES_FIELD": "-phrases-pt",
     "IPA_FIELD": "-ipa",
+    "LANG_SOURCE_ABRV": "en",
     "LANG_TARGET_ABRV": "pt",
     "COUNTRY_TARGET_ABRV": "br",
     "SOURCE_LANGUAGE": "ingles",

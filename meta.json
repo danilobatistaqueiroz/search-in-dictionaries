@@ -1,1 +1,1 @@
-{"name": "Search in many dictionaries"}
+{"name": "search in many dictionaries", "config": {"COUNTRY_TARGET_ABRV": "br", "DEFINITIONS_FIELD": "-definition", "IPA_FIELD": "-ipa", "LANG_SOURCE_ABRV": "en", "LANG_TARGET_ABRV": "pt", "PHRASES_FIELD": "-phrases", "SOURCE_LANGUAGE": "ingles", "TARGET_LANGUAGE": "portugues", "TRANSLATED_PHRASES_FIELD": "-phrases-pt", "TRANSLATIONS_FIELD": "-pt", "EXPRESSIONS_FIELD": "-expressions", "WORD_FIELD": "word"}}

@@ -14,6 +14,7 @@ from aqt import mw
 from aqt.utils import showInfo
 from aqt.qt import *
 
+from . import cambridge
 from . import collins
 from . import macmillan
 from . import babla
@@ -21,6 +22,7 @@ from . import pons
 from . import linguee
 from . import freedic
 from . import reverso
+from . import wordreference
 
 from .config import setup_synced_config
 
@@ -45,7 +47,7 @@ def msgbtn(i):
    print ("Button pressed is:",i.text())
 
 
-dictionaries = ['collins','macmillan','babla','pons','linguee','freedic','reverso']
+dictionaries = ['cambridge','collins','macmillan','babla','pons','linguee','freedic','reverso','wordreference']
 
 ADDON_PATH = os.path.dirname(__file__)
 ICON_PATH = os.path.join(ADDON_PATH, "icons", "dict.ico")
@@ -70,29 +72,33 @@ def paste_definitions(editor: Editor) -> None:
 
     source_language = CONFIG["SOURCE_LANGUAGE"]
     target_language = CONFIG["TARGET_LANGUAGE"]
-    abrv = CONFIG["LANG_TARGET_ABRV"]
+    abrv_source = CONFIG["LANG_SOURCE_ABRV"]
+    abrv_target = CONFIG["LANG_TARGET_ABRV"]
     abrv_country = CONFIG["COUNTRY_TARGET_ABRV"]
 
+    if editor.dic == 'cambridge':
+        results = cambridge.search(word)
     if editor.dic == 'collins':
         results = collins.search(word)
     elif editor.dic == 'macmillan':
         results = macmillan.search(word)
     elif editor.dic == 'babla':
-        results = babla.search(word, abrv, source_language, target_language)
+        results = babla.search(word, abrv_target, source_language, target_language)
     elif editor.dic == 'pons':
         results = pons.search(word, source_language, target_language)
     elif editor.dic == 'linguee':
         results = linguee.search(word, source_language, target_language)
     elif editor.dic == 'freedic':
-        results = freedic.search(word, abrv, abrv_country)
+        results = freedic.search(word, abrv_target, abrv_country)
     elif editor.dic == 'reverso':
-        results = reverso.search(word,abrv,target_language)
-
+        results = reverso.search(word, abrv_target, target_language)
+    elif editor.dic == 'wordreference':
+        results = wordreference.search(word, abrv_source, abrv_target)
 
     if len(results) == 0:
         showdialog(f"Word {word} not found.")
     elif results[0]=='' and results[1]=='' and results[2]=='' and results[3]=='':
-        showdialog(f"Word {word} not found.")
+        showdialog(f"Word {word} without results.")
 
     if len(results) >= 1:
         try:
@@ -133,6 +139,14 @@ def paste_definitions(editor: Editor) -> None:
                 note[editor.dic+CONFIG["TRANSLATED_PHRASES_FIELD"]] = f'{results[4]}'
         except KeyError:
             showdialog(f"Field '{editor.dic}{CONFIG['TRANSLATED_PHRASES_FIELD']}' doesn't exist.")
+            return
+
+    if len(results) >= 6:
+        try:
+            if results[5] != '':
+                note[editor.dic+CONFIG["EXPRESSIONS_FIELD"]] = f'{results[5]}'
+        except KeyError:
+            showdialog(f"Field '{editor.dic}{CONFIG['EXPRESSIONS_FIELD']}' doesn't exist.")
             return
 
     # update editor
